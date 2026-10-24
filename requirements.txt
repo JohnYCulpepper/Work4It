@@ -1,0 +1,8 @@
+cv2
+numpy
+mediapipe
+fastapi
+pydantic
+mediapipe
+uvicorn
+time
