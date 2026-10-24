@@ -1,8 +1,6 @@
-cv2
+opencv-python
 numpy
 mediapipe
 fastapi
 pydantic
-mediapipe
 uvicorn
-time

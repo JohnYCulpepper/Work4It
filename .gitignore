@@ -1,0 +1,29 @@
+# Android Studio
+.idea/
+*.iml
+.DS_Store
+
+# Gradle / build output
+.gradle/
+build/
+/captures
+.externalNativeBuild/
+.cxx/
+
+# Local machine config
+local.properties
+*.jks
+*.keystore
+google-services.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.env
+*.log
+
+# Mediapipe
+*.task
