@@ -263,7 +263,7 @@ public class CameraActivity extends AppCompatActivity {
 
         } catch(IOException e){
             Log.d("CameraActivity: pythonServerUrl", "Missing python server URL file");
-            pythonServerUrl = "http://192.168.4.27:8000/count";
+            pythonServerUrl = "http://YOUR-COMPUTER-IP:8000/count";
         }
         // Runs Camera Permissions Requests
         requestRuntimePermissions();
