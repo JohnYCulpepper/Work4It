@@ -50,7 +50,5 @@ dependencies {
 
     implementation("com.squareup.okhttp3:okhttp:5.4.0")
 
-    implementation("com.google.mediapipe:tasks-vision:latest.release")
-
     implementation("com.google.mediapipe:tasks-vision:0.10.14")
 }
