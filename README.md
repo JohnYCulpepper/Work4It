@@ -63,7 +63,7 @@ git clone https://github.com/JohnYCulpepper/Work4It.git
 
 ## Connecting the App to the Server
 
-The server runs on `0.0.0.0:8000`, but the app cannot connect to `0.0.0.0` directly. Set the address in `config.properties` (directory path: `frontend/app/src/main/java/com/johnculpepper/work4it`) based on how you run the app:
+The server runs on `0.0.0.0:8000`, but the app cannot connect to `0.0.0.0` directly. Set the address in `config.properties` (directory path: `frontend/app/src/main/assets/com/johnculpepper/work4it`) based on how you run the app:
 
 | Running on | Address |
 | --- | --- |
@@ -72,7 +72,7 @@ The server runs on `0.0.0.0:8000`, but the app cannot connect to `0.0.0.0` direc
 
 Due note that you would also have to change the try-catch `YOUR-COMPUTER-IP` statement within `CameraActivity.java` on line 266.
 
-Make sure the server is running before you launch the app, and that your firewall allows connections on port 8000.
+Make sure that the server is running when you try the app, and your firewall allows connections on port 8000.
 
 ## Project Structure
 
