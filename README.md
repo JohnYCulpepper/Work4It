@@ -71,7 +71,7 @@ The server runs on `0.0.0.0:8000`, but the app cannot connect to `0.0.0.0` direc
 | Android emulator | `10.0.2.2:8000` |
 | Physical phone (same Wi-Fi as your computer) | `YOUR-COMPUTER-IP:8000` (find it with `ipconfig` in Terminal) |
 
-Due note that you would also have to change the try-catch `YOUR-COMPUTER-IP` statement within [`CameraActivity.java`](https://github.com/JohnYCulpepper/Work4It/blob/master/frontend/app/src/main/java/com/johnculpepper/work4it/CameraActivity.java) on line 272.
+Due note that you would also have to change the try-catch `YOUR-COMPUTER-IP` statement within [`CameraActivity.java`](https://github.com/JohnYCulpepper/Work4It/blob/master/frontend/app/src/main/java/com/johnculpepper/work4it/CameraActivity.java) on line 282.
 
 Make sure that the server is running when you try the app, and your firewall allows connections on port 8000.
 
