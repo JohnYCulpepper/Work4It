@@ -17,7 +17,6 @@ public class NetworkManager {
         void onResult(int repCount, String stage);
         void onError(String error);
     }
-
     public void makeGetRequest(String url) {
         new Thread(() -> {
             Request request = new Request.Builder()
