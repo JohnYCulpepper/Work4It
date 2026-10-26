@@ -1,6 +1,6 @@
 # Work4It
 
-Work4It is an Android app paired with a Python server that uses MediaPipe pose detection.
+Work4It is an Android app paired with a Python server that uses MediaPipe pose detection to create a fitness-driven, social media app block that trades physical exercise for screentime.
 
 - **Frontend:** Android app (open in Android Studio)
 - **Backend:** FastAPI server with MediaPipe and OpenCV (run from VS Code or any Python editor)
@@ -11,6 +11,10 @@ Work4It is an Android app paired with a Python server that uses MediaPipe pose d
 - Android Studio
 - VS Code (or any Python editor)
 - Python 3.10 or newer
+- Install the necessary libraries within your terminal
+  `
+  pip install -r requirements.txt
+  `
 
 ## Getting Started
 
@@ -45,6 +49,7 @@ git clone https://github.com/JohnYCulpepper/Work4It.git
 4. Download the MediaPipe pose model and place it in the `backend` folder:
    - File: `pose_landmarker_full.task` (~23 MB)
    - Download: https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task
+   - Place the `pose_landmarker_full.task` file within `frontend/app/src/main/assets/com/johnculpepper`
    - More info: [MediaPipe Pose Landmarker page](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker)
    - The file is not stored in the repo because of its size.
 
@@ -63,7 +68,7 @@ git clone https://github.com/JohnYCulpepper/Work4It.git
 
 ## Connecting the App to the Server
 
-The server runs on `0.0.0.0:8000`, but the app cannot connect to `0.0.0.0` directly. Set the address in `config.properties` (directory path: `frontend/app/src/main/assets/com/johnculpepper/work4it`) based on how you run the app:
+The server runs on `0.0.0.0:8000`, but the app cannot connect to `0.0.0.0` directly. Set the address in `config.properties` (directory path: `frontend/app/src/main/assets/com/johnculpepper/Work4It`) based on how you run the app:
 
 | Running on | Address |
 | --- | --- |
