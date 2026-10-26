@@ -162,9 +162,10 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
     // Results of the Permission Request
+    // Results of the Permission Request
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults, int deviceId) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId);
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == REQUEST_CODE_CAMERA) {
             // Permission already granted
             if(grantResults.length > 0 &&
@@ -239,20 +240,25 @@ public class CameraActivity extends AppCompatActivity {
         overlayView = findViewById(R.id.overlayView);
 
         // Setup MediaPipe PoseLandmarker
-        BaseOptions baseOptions = BaseOptions.builder()
-                .setModelAssetPath("pose_landmarker_full.task")
-                .build();
+        try {
+            BaseOptions baseOptions = BaseOptions.builder()
+                    .setModelAssetPath("com/johnculpepper/Work4It/pose_landmarker_full.task")
+                    .build();
 
-        PoseLandmarker.PoseLandmarkerOptions options =
-                PoseLandmarker.PoseLandmarkerOptions.builder()
-                        .setBaseOptions(baseOptions)
-                        .setRunningMode(RunningMode.LIVE_STREAM)
-                        .setResultListener((result, image) -> {
-                            runOnUiThread(() -> overlayView.setResults(result));
-                        })
-                        .build();
+            PoseLandmarker.PoseLandmarkerOptions options =
+                    PoseLandmarker.PoseLandmarkerOptions.builder()
+                            .setBaseOptions(baseOptions)
+                            .setRunningMode(RunningMode.LIVE_STREAM)
+                            .setResultListener((result, image) -> {
+                                runOnUiThread(() -> overlayView.setResults(result));
+                            })
+                            .build();
 
-        poseLandmarker = PoseLandmarker.createFromOptions(this, options);
+            poseLandmarker = PoseLandmarker.createFromOptions(this, options);
+        } catch (Exception e) {
+            Log.e("CameraActivity", "Failed to initialize PoseLandmarker (Is pose_landmarker_full.task in assets?): " + e.getMessage(), e);
+            Toast.makeText(this, "Model init error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
 
         // Assigns Python IP Address url server through configure.properties
         try {

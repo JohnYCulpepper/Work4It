@@ -39,15 +39,18 @@ public class ExerciseActivity extends AppCompatActivity {
         exerciseButtons.put(R.id.exercisePushup, "pushup");
         for(Map.Entry<Integer, String> entry: exerciseButtons.entrySet()) {
             int exerciseId = entry.getKey();
+            String exerciseType = entry.getValue();
 
             Button button = findViewById(exerciseId);
-            button.setOnClickListener(v-> {
-                Intent intent = new Intent(ExerciseActivity.this, CameraActivity.class);
-                // Used so that the CameraActivity class can get the exercise type
-                intent.putExtra("exercise_type", entry.getValue());
-                startActivity(intent);
-                finish();
-            });
+            if (button != null) {
+                button.setOnClickListener(v-> {
+                    Intent intent = new Intent(ExerciseActivity.this, CameraActivity.class);
+                    // Used so that the CameraActivity class can get the exercise type
+                    intent.putExtra("exercise_type", exerciseType);
+                    startActivity(intent);
+                    finish();
+                });
+            }
         }
     }
 }
