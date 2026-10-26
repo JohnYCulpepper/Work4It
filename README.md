@@ -11,10 +11,6 @@ Work4It is an Android app paired with a Python server that uses MediaPipe pose d
 - Android Studio
 - VS Code (or any Python editor)
 - Python 3.10 or newer
-- Install the necessary libraries within your terminal
-  ```
-  pip install -r requirements.txt
-  ```
 
 ## Getting Started
 
