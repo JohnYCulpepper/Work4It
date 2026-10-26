@@ -37,42 +37,37 @@ public class TimeManager {
         return new int[]{seconds, minutes, hours};
     }
     // Add minutes when user exercises
-    public void addMinutes(int minutes) {
-        int seconds = getSecondsRemaining();
-        SharedPreferences.Editor editor = prefs.edit();
-
-        if(minutesEarned < DAILY_LIMIT) {
-            // Constraint to stop users from earning more than DAILY_LIMIT
-            int newMinutes = Math.min(minutes, DAILY_LIMIT - minutesEarned);
-            editor.putInt(KEY_SECONDS, seconds + (newMinutes * 60));
-            editor.putInt(KEY_MINUTES_EARNED, minutesEarned+ newMinutes);
-            editor.apply();
-            minutesEarned += newMinutes;
+    // Returns how many minutes were actually added (0 if the daily limit is already reached)
+    public int addMinutes(int minutes) {
+        int earned = prefs.getInt(KEY_MINUTES_EARNED, 0);
+        int allowance = DAILY_LIMIT - earned;
+        if (allowance <= 0 || minutes <= 0) {
+            Log.d("TimeManager/DailyLimitReached", "Nothing added. Earned: " + earned);
+            return 0;
         }
-        // Daily Limit IS reached
-        else {
-            Intent intent = new Intent(context, CameraActivity.class);
-            intent.putExtra("reached_limit", true);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // needed since context here likely isn't an Activity in every call path
-            context.startActivity(intent);
-            Log.d("TimeManager/DailyLimitReached", "User has reached daily limit of screen time: " + DAILY_LIMIT / 60);
-        }
+        int newMinutes = Math.min(minutes, allowance);
+        prefs.edit()
+                .putInt(KEY_SECONDS, getSecondsRemaining() + newMinutes * 60)
+                .putInt(KEY_MINUTES_EARNED, earned + newMinutes)
+                .apply();
+        return newMinutes;
     }
-
     // Subtract seconds when user uses a blocked app, never below zero
     public void subtractSeconds(int sec) {
-        int seconds = getSecondsRemaining();
-        int newSeconds = Math.max(0, seconds - sec);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(KEY_SECONDS, newSeconds);
-        editor.apply();
+        int newSeconds = Math.max(0, getSecondsRemaining() - sec);
+        prefs.edit().putInt(KEY_SECONDS, newSeconds).apply();
     }
 
-    // Reset to 0 at the start of each day
+    public boolean isLimitReached() {
+        return prefs.getInt(KEY_MINUTES_EARNED, 0) >= DAILY_LIMIT;
+    }
+    public int getMinutesLeftToEarn() {
+        return Math.max(0, DAILY_LIMIT - prefs.getInt(KEY_MINUTES_EARNED, 0));
+    }
     public void resetDaily() {
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(KEY_SECONDS, DAILY_RESET);
-        editor.putInt(KEY_MINUTES_EARNED, DAILY_RESET);
-        editor.apply();
+        prefs.edit()
+                .putInt(KEY_SECONDS, DAILY_RESET)
+                .putInt(KEY_MINUTES_EARNED, DAILY_RESET)
+                .apply();
     }
 }

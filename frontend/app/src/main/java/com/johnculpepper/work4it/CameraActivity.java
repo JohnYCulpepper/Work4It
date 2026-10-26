@@ -206,6 +206,7 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
     private void setFrameInterval(String exerciseType) {
+        if(exerciseType == null) return;
         switch(exerciseType) {
             case "squat":
                 frameIntervalMs = 100;  // 10 fps - squats
@@ -216,6 +217,15 @@ public class CameraActivity extends AppCompatActivity {
             default:
                 frameIntervalMs = 1000; // 1 fps default
         }
+    }
+
+    // Activates when user exits CameraActivity; stops camera and closes poseLandmarker
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (cameraProvider != null) cameraProvider.unbindAll();
+        if (poseLandmarker != null) poseLandmarker.close();
+        executor.shutdown();
     }
 
     @Override
@@ -269,7 +279,7 @@ public class CameraActivity extends AppCompatActivity {
 
         } catch(IOException e){
             Log.d("CameraActivity: pythonServerUrl", "Missing python server URL file");
-            pythonServerUrl = "http://YOUR-COMPUTER-IP:8000/count";
+            pythonServerUrl = "http://YOUR-COMPUTER-IP/count";
         }
         // Runs Camera Permissions Requests
         requestRuntimePermissions();
@@ -295,8 +305,7 @@ public class CameraActivity extends AppCompatActivity {
 
         // Daily Limit Reached Text View
         TextView dailyLimitText = findViewById(R.id.dailyLimitHit);
-        this.dailyLimitReached = getIntent().getBooleanExtra("reached_limit", false);
-        if(dailyLimitReached) {
+        if (timeManager.isLimitReached()) {
             dailyLimitText.setText("Reached Daily Limit of 2 Hours!");
         }
         //Activates Record Button
@@ -394,6 +403,14 @@ public class CameraActivity extends AppCompatActivity {
                         Log.d("CameraActivity:onResult:RepCount", "Received: " + repCount);
                         CameraActivity.this.repCount = repCount;
                         runOnUiThread(() -> repCountDisplay.setText(repCount + " Reps"));
+                        runOnUiThread(() -> {
+                            repCountDisplay.setText(repCount + " Reps");
+                            if (repCount >= timeManager.getMinutesLeftToEarn()) {
+                                ((TextView) findViewById(R.id.dailyLimitHit))
+                                        .setText("Reached Daily Limit of 2 Hours!");
+                                stopRecording();
+                            }
+                        });
                     }
                     @Override
                     public void onError(String error) {
@@ -414,6 +431,10 @@ public class CameraActivity extends AppCompatActivity {
         });
 
         timeManager.addMinutes(repCount);
+        if (timeManager.isLimitReached()) {
+            ((TextView) findViewById(R.id.dailyLimitHit))
+                    .setText("Reached Daily Limit of 2 Hours!");
+        }
         repCount = 0;
         NetworkManager networkManager = new NetworkManager();
         networkManager.makeGetRequest(pythonServerUrl.replace("/count", "/reset"));

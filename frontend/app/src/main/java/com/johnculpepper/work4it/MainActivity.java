@@ -56,12 +56,6 @@ public class MainActivity extends AppCompatActivity {
         return Settings.canDrawOverlays(this);
     }
 
-    // Added delay so that when the user returns to the app the popup doesn't show
-    // again even if they already selected to enable camera permissions
-    private void permissionsCheckerDelay() {
-        permissionHandler.removeCallbacksAndMessages(null);
-        permissionHandler.postDelayed(this::checkPermissions, 500);
-    }
     // Stops the activity from continuing to run while already on another activity
     @Override
     protected void onDestroy() {
@@ -141,14 +135,15 @@ public class MainActivity extends AppCompatActivity {
         prefs = getSharedPreferences("Work4It", MODE_PRIVATE);
 
         timeManager = new TimeManager(this);
+        timeManager.addMinutes(115);
         timeDisplay = findViewById(R.id.timeDisplay);
         nextDayChecker();
 
         // Stops immediately if redirected to PickAppsToBlock
         if (pickAppToBlock()) return;
-
         prefs.edit().putBoolean("get_requested", true).apply();
-        permissionsCheckerDelay();
+
+        checkPermissions();
         updateTimeDisplay();
 
         Button exerciseButton = findViewById(R.id.exerciseButton);
@@ -172,9 +167,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         nextDayChecker();
+        checkPermissions();
 
         if (pickAppToBlock()) return;
-        permissionsCheckerDelay();
 
         updateTimeDisplay();
     }
