@@ -64,7 +64,7 @@ git clone https://github.com/JohnYCulpepper/Work4It.git
 
 ## Connecting the App to the Server
 
-The server runs on `0.0.0.0:8000`, but the app cannot connect to `0.0.0.0` directly. Set the address in `config.properties` (directory path: [`frontend/app/src/main/assets/com/johnculpepper/Work4It`](https://github.com/JohnYCulpepper/Work4It/tree/master/frontend/app/src/main/assets/com/johnculpepper/Work4It)) based on how you run the app:
+The server runs on `0.0.0.0:8000`, but the app cannot connect to `0.0.0.0` directly. Set the address in [`config.properties`](https://github.com/JohnYCulpepper/Work4It/tree/master/frontend/app/src/main/assets/com/johnculpepper/Work4It) based on how you run the app:
 
 | Running on | Address |
 | --- | --- |
