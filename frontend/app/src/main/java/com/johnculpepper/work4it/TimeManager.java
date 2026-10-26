@@ -61,6 +61,7 @@ public class TimeManager {
     public boolean isLimitReached() {
         return prefs.getInt(KEY_MINUTES_EARNED, 0) >= DAILY_LIMIT;
     }
+    // Used to check whether 120 minute limit is met: CameraActivity
     public int getMinutesLeftToEarn() {
         return Math.max(0, DAILY_LIMIT - prefs.getInt(KEY_MINUTES_EARNED, 0));
     }
