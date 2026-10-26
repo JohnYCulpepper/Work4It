@@ -1,6 +1,6 @@
 # Work4It
 
-Work4It is an Android app paired with a Python server that uses MediaPipe pose detection.
+Work4It is an Android app paired with a Python server that uses MediaPipe pose detection to create a fitness-driven, social media app block that trades physical exercise for screentime.
 
 - **Frontend:** Android app (open in Android Studio)
 - **Backend:** FastAPI server with MediaPipe and OpenCV (run from VS Code or any Python editor)
@@ -45,6 +45,7 @@ git clone https://github.com/JohnYCulpepper/Work4It.git
 4. Download the MediaPipe pose model and place it in the `backend` folder:
    - File: `pose_landmarker_full.task` (~23 MB)
    - Download: https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task
+   - Place the `pose_landmarker_full.task` file within `frontend/app/src/main/assets/com/johnculpepper`
    - More info: [MediaPipe Pose Landmarker page](https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker)
    - The file is not stored in the repo because of its size.
 
@@ -63,14 +64,14 @@ git clone https://github.com/JohnYCulpepper/Work4It.git
 
 ## Connecting the App to the Server
 
-The server runs on `0.0.0.0:8000`, but the app cannot connect to `0.0.0.0` directly. Set the address in `config.properties` (directory path: `frontend/app/src/main/assets/com/johnculpepper/work4it`) based on how you run the app:
+The server runs on `0.0.0.0:8000`, but the app cannot connect to `0.0.0.0` directly. Set the address in [`config.properties`](https://github.com/JohnYCulpepper/Work4It/tree/master/frontend/app/src/main/assets/com/johnculpepper/Work4It) based on how you run the app:
 
 | Running on | Address |
 | --- | --- |
 | Android emulator | `10.0.2.2:8000` |
 | Physical phone (same Wi-Fi as your computer) | `YOUR-COMPUTER-IP:8000` (find it with `ipconfig` in Terminal) |
 
-Due note that you would also have to change the try-catch `YOUR-COMPUTER-IP` statement within `CameraActivity.java` on line 266.
+Due note that you would also have to change the try-catch `YOUR-COMPUTER-IP` statement within [`CameraActivity.java`](https://github.com/JohnYCulpepper/Work4It/blob/master/frontend/app/src/main/java/com/johnculpepper/work4it/CameraActivity.java) on line 272.
 
 Make sure that the server is running when you try the app, and your firewall allows connections on port 8000.
 

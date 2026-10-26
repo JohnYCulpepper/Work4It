@@ -26,7 +26,7 @@ def calculate_angles(
     if denom == 0:
         return 0.0
     cos_val = np.clip((a**2 + c**2 - b**2) / denom, -1.0, 1.0) # Limits cosine value to its range [-1, 1]
-    angle = np.arccos(cos_val)
+    angle = np.degrees(np.arccos(cos_val))
     return angle
 
 class RepCounter:
@@ -44,17 +44,17 @@ class RepCounter:
             right_visible = visibilities[1] > 0.6
 
             if left_visible and right_visible:
-                elbow_closed = angles[0] < 110.0 and angles[1] < 110.0
+                elbow_closed = angles[0] < 120.0 and angles[1] < 120.0
                 elbow_opened = angles[0] > 170.0 and angles[1] > 170.0
                 avg_shoulder = (shoulder_ys[0] + shoulder_ys[1]) / 2
                 avg_hip = (hip_ys[0] + hip_ys[1]) / 2
             elif left_visible:
-                elbow_closed = angles[0] < 110.0
+                elbow_closed = angles[0] < 120.0
                 elbow_opened = angles[0] > 170.0
                 avg_shoulder = shoulder_ys[0]
                 avg_hip = hip_ys[0]
             elif right_visible:
-                elbow_closed = angles[1] < 110.0
+                elbow_closed = angles[1] < 120.0
                 elbow_opened = angles[1] > 170.0
                 avg_shoulder = shoulder_ys[1]
                 avg_hip = hip_ys[1]
@@ -113,6 +113,7 @@ class RepResponse(BaseModel):
 counter: RepCounter = RepCounter()
 
 MODEL_PATH = Path(__file__).parent / "pose_landmarker_full.task"
+print(MODEL_PATH)
 base_options = python.BaseOptions(model_asset_path=str(MODEL_PATH))
 options = vision.PoseLandmarkerOptions(
     base_options=base_options,
@@ -143,6 +144,7 @@ async def count_reps(
     content = await frame.read()
     nparr = np.frombuffer(content, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     # Convert cv2 image to MediaPipe format
     mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=img)
