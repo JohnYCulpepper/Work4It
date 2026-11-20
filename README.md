@@ -24,18 +24,17 @@ git clone https://github.com/JohnYCulpepper/Work4It.git
 
 ### Explanation
 
-**POST /count:** takes a frame (JPEG image) and `exercise_type` (squat or pushup) as form data. It returns `{rep_count, stage, exercise_type}` back to Android side for live rep count storage.
+**POST /count:** takes a frame (JPEG image), `exercise_type` (squat or pushup), and `session_id` (randomly generated unique id) as form data. It returns `{rep_count, stage, exercise_type}` back to Android side for live rep count storage.
 
-**GET /reset:** resets the rep count and stage. The app calls it when the user reopens it.
+**GET /reset:** takes session_id as a query parameter. Resets the rep count and stage. The app calls it when the user stops recording.
 
-**How reps are counted:** Tracks landmark positions returned by Mediapipe to calculate angle (via `distance()` and `calculate_angles()`) at compound movement joints (e.g. knee or elbow).
+**How reps are counted:** Tracks landmark positions returned by MediaPipe to calculate angle (via `distance()` and `calculate_angles()`) at compound movement joints (e.g. knee or elbow).
 1. Squats use the knee angle (<= 90° is down, >= 170° is up). 
 2. Pushups use the elbow angle (<= 120° is closed, >= 170° is open). Check: requires the shoulders to drop by at least 10% of torso length, so arm wiggles don’t count.
 
-**Unique User ID:** get_counter() function stores and retrieves unique user id (generated from App Side). Allows for multi-user usuage rather than relying on a global counter variable, that limits the server to only one user.
+**Unique User ID:** get_counter() function stores and retrieves unique user id (generated from App Side). Allows for multi-user usage rather than relying on a global counter variable, which limits the server to only one user.
 
-**Limitations:** a joint is ignored unless its visibility is above 0.6. 
-
+**Limitations:** a joint is ignored unless its visibility is above 0.6. Idle sessions expire after 30 minutes, and restarting the server clears all counts
 
 ### Setup
 
@@ -99,18 +98,23 @@ git clone https://github.com/JohnYCulpepper/Work4It.git
 1. Open Android Studio and choose **Open**, then select the `frontend` folder.
 2. Wait for Gradle to finish syncing. Dependencies download automatically, and Android Studio will prompt you to install any missing SDK components.
 3. Open `configure.properties` and set the server address (see below).
-4. Run the app on an emulator or a physical device.
+4.  Download the same MediaPipe pose model and place it in the `frontend/app/src/main/assets/com/johnculpepper/Work4It/pose_landmarker_full.task` file path:
+   - Download: https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/1/pose_landmarker_full.task
+   - More details found in **Backend Setup 4.**
+5. Run the app on an emulator or a physical device.
 
 ## Connecting the App to the Server
 
-The server runs on `0.0.0.0:8000`, but the app cannot connect to `0.0.0.0` directly. Set the address in [`config.properties`](https://github.com/JohnYCulpepper/Work4It/tree/master/frontend/app/src/main/assets/com/johnculpepper/Work4It) based on how you run the app:
+The server runs on `0.0.0.0:8000`, but the app cannot connect to `0.0.0.0` directly. Set the address in [`configure.properties`](https://github.com/JohnYCulpepper/Work4It/tree/master/frontend/app/src/main/assets/com/johnculpepper/Work4It) based on how you run the app:
 
 | Running on | Address |
 | --- | --- |
 | Android emulator | `10.0.2.2:8000` |
 | Physical phone (same Wi-Fi as your computer) | `YOUR-COMPUTER-IP:8000` (find it with `ipconfig` in Terminal) |
 
-Due note that you would also have to change the try-catch `YOUR-COMPUTER-IP` statement within [`CameraActivity.java`](https://github.com/JohnYCulpepper/Work4It/blob/master/frontend/app/src/main/java/com/johnculpepper/work4it/CameraActivity.java) on line 282.
+What it currently looks like in `configure.properties`: `http://YOUR-COMPUTER-IP:8000/count`
+
+Due note that you would also have to change the try-catch `YOUR-COMPUTER-IP` statement within [`CameraActivity.java`](https://github.com/JohnYCulpepper/Work4It/blob/master/frontend/app/src/main/java/com/johnculpepper/work4it/CameraActivity.java) the catch block in onCreate.
 
 Make sure that the server is running when you try the app, and your firewall allows connections on port 8000.
 
@@ -119,12 +123,17 @@ Make sure that the server is running when you try the app, and your firewall all
 ```
 Work4It/
   backend/     Python server and MediaPipe model
+   requirements.txt
+   work4it_server.py
   frontend/    Android Studio project
+   ...
+   app/
+   ...
   README.md
 ```
 
 ## Troubleshooting
 
-- **App can't reach the server:** check the address in `config.properties`, confirm the server is running, and make sure the phone and computer are on the same network.
+- **App can't reach the server:** check the address in `configure.properties`, confirm the server is running, and make sure the phone and computer are on the same network.
 - **`ModuleNotFoundError` when starting the server:** activate the virtual environment and run `pip install -r requirements.txt` again.
-- **Model file not found:** confirm `pose_landmarker_full.task` is in the `backend` folder.
+- **Model file not found:** confirm `pose_landmarker_full.task` is in both the `backend` and `frontend` folders.
