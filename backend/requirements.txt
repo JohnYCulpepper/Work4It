@@ -4,4 +4,8 @@ mediapipe
 fastapi
 pydantic
 uvicorn
+<<<<<<< HEAD:backend/requirements.txt
 python-multipart
+=======
+python-multipart
+>>>>>>> 5bf439ceed73a04edf452c5b41cbc7698cc3401b:requirements.txt
