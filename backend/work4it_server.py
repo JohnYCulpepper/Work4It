@@ -7,6 +7,7 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 import uvicorn
 from pathlib import Path
+import time
 
 
 def distance(
@@ -110,8 +111,7 @@ class RepResponse(BaseModel):
     stage: str
     exercise_type: str
 
-counter: RepCounter = RepCounter()
-
+# Retrieves the pose_landmarker_full.task model from its parent directory
 MODEL_PATH = Path(__file__).parent / "pose_landmarker_full.task"
 print(MODEL_PATH)
 base_options = python.BaseOptions(model_asset_path=str(MODEL_PATH))
@@ -123,18 +123,48 @@ detector = vision.PoseLandmarker.create_from_options(options)
 # Initializes FastAPI routes
 app = FastAPI()
 
+"""
+Changes: 
+    Removed global counter: RepCounter() variable
+    Can now store and retrieve unique user ID
+    Allows for multi-user usuage 
+"""
+sessions: dict[str, RepCounter] = {} # id: RepCounter()
+last_seen: dict[str, float] = {} # id: time_last_seen
+IDLE_LIMIT: int = 60 * 30
+
+def get_counter(session_id: str) -> RepCounter:
+    now = time.time()
+    # Removes sessions that are idle for too long
+    for sess_id in [s for s,t in last_seen.items() if now - t > IDLE_LIMIT]:
+        sessions.pop(sess_id, None)
+        last_seen.pop(sess_id, None)
+
+    # Checks whether the session id was even in the sessions table
+    if session_id not in sessions: 
+        sessions[session_id] = RepCounter()
+    # Updates time idle for the user
+    last_seen[session_id] = now
+
+    return sessions[session_id]
+
 # Resets exercise count and stage of motion after user reopens app
 @app.get("/reset")
-async def reset_counter():
+async def reset_counter(session_id: str):
+    counter = get_counter(session_id)
     counter.count = 0
     counter.stage = "none"
 
     return {"message": "Counter reset"}
 
+# Retrieves data from Android App side
 @app.post("/count")
 async def count_reps(
     frame: UploadFile = File(...),
-    exercise_type: str = Form(...)):
+    exercise_type: str = Form(...),
+    session_id: str = Form(...)):
+
+    counter = get_counter(session_id)
 
     print(f"Received frame for exercise: {exercise_type}")
     print(f"Current rep count: {counter.count}")

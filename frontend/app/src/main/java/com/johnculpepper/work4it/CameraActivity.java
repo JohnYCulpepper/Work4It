@@ -73,6 +73,9 @@ public class CameraActivity extends AppCompatActivity {
 
     private TextView repCountDisplay;
     private Preview preview;
+
+    private final NetworkManager networkManager = new NetworkManager();
+
     // Condenses images to Bytes for Mediapipe CV to use
     private Bitmap imageProxyToBitmap(ImageProxy image) {
         byte[] jpegBytes = convertImageProxyToByteArray(image);
@@ -396,13 +399,12 @@ public class CameraActivity extends AppCompatActivity {
                 lastFrameTime = currentTime;
                 byte[] imageBytes = convertImageProxyToByteArray(image);
 
-                NetworkManager networkManager = new NetworkManager();
                 networkManager.sendFrame(pythonServerUrl, imageBytes, exerciseType, new NetworkManager.RepCountCallback() {
                     @Override
                     public void onResult(int repCount, String stage) {
                         Log.d("CameraActivity:onResult:RepCount", "Received: " + repCount);
                         CameraActivity.this.repCount = repCount;
-                        runOnUiThread(() -> repCountDisplay.setText(repCount + " Reps"));
+                        // Updates repCount text live
                         runOnUiThread(() -> {
                             repCountDisplay.setText(repCount + " Reps");
                             if (repCount >= timeManager.getMinutesLeftToEarn()) {
@@ -436,7 +438,6 @@ public class CameraActivity extends AppCompatActivity {
                     .setText("Reached Daily Limit of 2 Hours!");
         }
         repCount = 0;
-        NetworkManager networkManager = new NetworkManager();
         networkManager.makeGetRequest(pythonServerUrl.replace("/count", "/reset"));
     }
 }
