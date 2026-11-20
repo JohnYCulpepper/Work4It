@@ -29,8 +29,8 @@ git clone https://github.com/JohnYCulpepper/Work4It.git
 **GET /reset:** takes session_id as a query parameter. Resets the rep count and stage. The app calls it when the user stops recording.
 
 **How reps are counted:** Tracks landmark positions returned by MediaPipe to calculate angle (via `distance()` and `calculate_angles()`) at compound movement joints (e.g. knee or elbow).
-1. Squats use the knee angle (<= 90° is down, >= 170° is up). 
-2. Pushups use the elbow angle (<= 120° is closed, >= 170° is open). Check: requires the shoulders to drop by at least 10% of torso length, so arm wiggles don’t count.
+- Squats use the knee angle (<= 90° is down, >= 170° is up). 
+- Pushups use the elbow angle (<= 120° is closed, >= 170° is open). Check: requires the shoulders to drop by at least 10% of torso length, so arm wiggles don’t count.
 
 **Unique User ID:** get_counter() function stores and retrieves unique user id (generated from App Side). Allows for multi-user usage rather than relying on a global counter variable, which limits the server to only one user.
 
