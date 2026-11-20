@@ -4,3 +4,4 @@ mediapipe
 fastapi
 pydantic
 uvicorn
+python-multipart
